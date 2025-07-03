@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>شات جماعي</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      font-family: 'Cairo', Arial, sans-serif;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      direction: rtl;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 2;
+    }
+    .login-form {
+      background: #fff;
+      padding: 2.5rem 2rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      min-width: 320px;
+    }
+    .login-form h2 {
+      margin: 0 0 1rem 0;
+      color: #2575fc;
+      text-align: center;
+    }
+    .login-form input[type="text"] {
+      padding: 0.7rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      outline: none;
+      transition: border 0.2s;
+    }
+    .login-form input[type="text"]:focus {
+      border: 1.5px solid #2575fc;
+    }
+    .gender-select {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+    }
+    .gender-select label {
+      font-size: 1.1rem;
+      color: #333;
+      cursor: pointer;
+    }
+    .login-form button {
+      padding: 0.8rem;
+      background: #2575fc;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .login-form button:hover {
+      background: #6a11cb;
+    }
+    .chat-container {
+      max-width: 480px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      display: flex;
+      flex-direction: column;
+      min-height: 70vh;
+      overflow: hidden;
+    }
+    .chat-header {
+      background: linear-gradient(90deg, #2575fc 0%, #6a11cb 100%);
+      color: #fff;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.2rem;
+    }
+    .logout-btn {
+      background: #fff;
+      color: #2575fc;
+      border: none;
+      border-radius: 6px;
+      padding: 0.4rem 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .logout-btn:hover {
+      background: #f0f0f0;
+    }
+    .messages-list {
+      flex: 1;
+      padding: 1.2rem;
+      overflow-y: auto;
+      background: #f7f9fa;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+      min-height: 200px;
+      max-height: 400px;
+    }
+    .empty {
+      color: #aaa;
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .send-form {
+      display: flex;
+      gap: 0.5rem;
+      padding: 1rem;
+      background: #f7f9fa;
+      border-top: 1px solid #eee;
+    }
+    .send-form input[type="text"] {
+      flex: 1;
+      padding: 0.7rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      outline: none;
+      transition: border 0.2s;
+    }
+    .send-form input[type="text"]:focus {
+      border: 1.5px solid #2575fc;
+    }
+    .send-form button {
+      padding: 0.7rem 1.1rem;
+      background: #2575fc;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .send-form button:hover {
+      background: #6a11cb;
+    }
+    .send-form .delete-all {
+      background: #ff4d4f;
+      color: #fff;
+      margin-right: 0.5rem;
+    }
+    .send-form .delete-all:hover {
+      background: #d9363e;
+    }
+    .message {
+      background: #f0f4ff;
+      border-radius: 10px;
+      padding: 0.7rem 1rem;
+      box-shadow: 0 2px 8px rgba(80,120,255,0.04);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      position: relative;
+      min-width: 120px;
+    }
+    .message.male {
+      border-right: 5px solid #2575fc;
+    }
+    .message.female {
+      border-right: 5px solid #e75480;
+    }
+    .message.own {
+      background: #e6f7ff;
+      align-self: flex-end;
+      border-left: 5px solid #2575fc;
+      border-right: none;
+    }
+    .msg-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.2rem;
+    }
+    .msg-name {
+      font-weight: bold;
+      color: #333;
+    }
+    .msg-gender.male {
+      color: #2575fc;
+    }
+    .msg-gender.female {
+      color: #e75480;
+    }
+    .delete-btn {
+      background: #ff4d4f;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.2rem 0.7rem;
+      font-size: 0.9rem;
+      margin-right: 0.5rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .delete-btn:hover {
+      background: #d9363e;
+    }
+    .msg-text {
+      color: #222;
+      font-size: 1.05rem;
+      word-break: break-word;
+    }
+  </style>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+  <div id="login" class="login-container">
+    <form class="login-form" id="loginForm">
+      <h2>تسجيل الدخول</h2>
+      <input type="text" id="nameInput" placeholder="اكتب اسمك..." required />
+      <div class="gender-select">
+        <label><input type="radio" name="gender" value="male" checked /> ذكر</label>
+        <label><input type="radio" name="gender" value="female" /> أنثى</label>
+      </div>
+      <button type="submit">دخول</button>
+    </form>
+  </div>
+  <div id="chat" class="chat-container" style="display:none;">
+    <div class="chat-header">
+      <span>غرفة الشات الجماعي</span>
+      <button class="logout-btn" id="logoutBtn">خروج</button>
+    </div>
+    <div class="messages-list" id="messagesList"></div>
+    <form class="send-form" id="sendForm">
+      <input type="text" id="msgInput" placeholder="اكتب رسالتك..." autocomplete="off" />
+      <button type="submit">إرسال</button>
+      <button type="button" class="delete-all" id="deleteAllBtn">حذف الكل</button>
+    </form>
+  </div>
+  <script>
+    // إعداد Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyA8aaCdSFakGAwkicUOj0aFOHn08PQF1FE",
+      authDomain: "chat-d298c.firebaseapp.com",
+      databaseURL: "https://chat-d298c-default-rtdb.firebaseio.com",
+      projectId: "chat-d298c",
+      storageBucket: "chat-d298c.firebasestorage.app",
+      messagingSenderId: "91246861194",
+      appId: "1:91246861194:web:35a12218aaea24ba16c673",
+      measurementId: "G-5CWHFRZL1Q"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const messagesRef = db.ref('messages');
+
+    // عناصر DOM
+    const loginDiv = document.getElementById('login');
+    const chatDiv = document.getElementById('chat');
+    const loginForm = document.getElementById('loginForm');
+    const nameInput = document.getElementById('nameInput');
+    const sendForm = document.getElementById('sendForm');
+    const msgInput = document.getElementById('msgInput');
+    const messagesList = document.getElementById('messagesList');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const deleteAllBtn = document.getElementById('deleteAllBtn');
+
+    let currentUser = null;
+
+    // تسجيل الدخول
+    loginForm.onsubmit = function(e) {
+      e.preventDefault();
+      const name = nameInput.value.trim();
+      const gender = loginForm.gender.value;
+      if (name) {
+        currentUser = { name, gender };
+        loginDiv.style.display = 'none';
+        chatDiv.style.display = 'flex';
+        loadMessages();
+      }
+    };
+
+    // زر الخروج
+    logoutBtn.onclick = function() {
+      chatDiv.style.display = 'none';
+      loginDiv.style.display = 'flex';
+      nameInput.value = '';
+      msgInput.value = '';
+      messagesList.innerHTML = '';
+      currentUser = null;
+    };
+
+    // إرسال رسالة
+    sendForm.onsubmit = function(e) {
+      e.preventDefault();
+      const text = msgInput.value.trim();
+      if (text && currentUser) {
+        messagesRef.push({
+          name: currentUser.name,
+          gender: currentUser.gender,
+          text,
+          timestamp: Date.now()
+        });
+        msgInput.value = '';
+      }
+    };
+
+    // حذف كل الرسائل
+    deleteAllBtn.onclick = function() {
+      if (confirm('هل أنت متأكد من حذف كل الشات؟')) {
+        messagesRef.set({});
+      }
+    };
+
+    // تحميل الرسائل في الوقت الحقيقي
+    function loadMessages() {
+      messagesRef.off();
+      messagesRef.on('value', (snapshot) => {
+        const data = snapshot.val() || {};
+        const msgs = Object.entries(data).map(([id, msg]) => ({ id, ...msg }));
+        msgs.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+        renderMessages(msgs);
+      });
+    }
+
+    // حذف رسالة واحدة
+    function deleteMessage(id) {
+      messagesRef.child(id).remove();
+    }
+
+    // عرض الرسائل
+    function renderMessages(msgs) {
+      messagesList.innerHTML = '';
+      if (msgs.length === 0) {
+        messagesList.innerHTML = '<div class="empty">لا توجد رسائل بعد.</div>';
+        return;
+      }
+      msgs.forEach(msg => {
+        const isOwn = currentUser && msg.name === currentUser.name;
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `message ${msg.gender} ${isOwn ? 'own' : ''}`;
+        msgDiv.innerHTML = `
+          <div class="msg-header">
+            <span class="msg-name">${msg.name}</span>
+            <span class="msg-gender ${msg.gender}">${msg.gender === 'male' ? '👦' : '👧'}</span>
+            ${isOwn ? `<button class="delete-btn" onclick="deleteMessage('${msg.id}')">حذف</button>` : ''}
+          </div>
+          <div class="msg-text">${msg.text}</div>
+        `;
+        messagesList.appendChild(msgDiv);
+      });
+      messagesList.scrollTop = messagesList.scrollHeight;
+    }
+    // اجعل دالة الحذف متاحة للعناصر
+    window.deleteMessage = deleteMessage;
+  </script>
+</body>
+</html> 
